@@ -4,12 +4,14 @@
     "description": "",
     "main": "index.js",
     "scripts": {
-        "start": "node src/index.js"
+        "start": "node src/index.js",
+        "dev": "nodemon --legacy-watch --exitcrash src/index.js"
     },
     "author": "",
     "license": "ISC",
     "dependencies": {
         "express": "4.17.1",
-        "mongoose": "5.9.10"
+        "mongoose": "5.9.10",
+        "nodemon": "2.0.3"
     }
 }

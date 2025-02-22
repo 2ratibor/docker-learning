@@ -3,7 +3,7 @@ version: '3'
 services:
   api:
     build: ./api
-    command: npm run start
+    command: npm run dev
     restart: unless-stopped
     ports:
       - '3000:3000'
@@ -13,6 +13,9 @@ services:
       MONGO_URL: mongodb://api_db:27017/api
     depends_on:
       - api_db
+    volumes:
+      - /usr/src/app/node_modules
+      - ./api:/usr/src/app
   api_db:
     image: mongo:latest
     volumes:
