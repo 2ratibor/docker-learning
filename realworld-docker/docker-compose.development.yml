@@ -6,8 +6,6 @@ services:
     container_name: realworld-docker-frontend
     command: npm run start
     restart: unless-stopped
-    ports:
-      - '3000:3000'
     environment:
       CHOKIDAR_USEPOLLING: true
     stdin_open: true
@@ -57,6 +55,15 @@ services:
     container_name: realworld-docker-auth-db
     volumes:
       - mongodb_auth:/data/db
+  nginx:
+    image: nginx:1.26.3
+    container_name: realworld-docker-nginx
+    ports:
+      - "80:80"
+    depends_on:
+      - frontend
+    volumes:
+      - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
 volumes:
   mongodb_api:
   mongodb_auth:
