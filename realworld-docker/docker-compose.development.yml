@@ -13,6 +13,8 @@ services:
     volumes:
       - /usr/src/app/node_modules
       - ./frontend:/usr/src/app
+    networks:
+      - realworld-docker-network
   api:
     build: ./api
     container_name: realworld-docker-api
@@ -24,11 +26,14 @@ services:
       PORT: 3001
       HOST: http://realworld-docker.com
       MONGO_URL: mongodb://api_db:27017/api
+      AUTH_API_URL: http://auth:3002/api
     depends_on:
       - api_db
     volumes:
       - /usr/src/app/node_modules
       - ./api:/usr/src/app
+    networks:
+      - realworld-docker-network
   auth:
     build: ./auth
     container_name: realworld-docker-auth
@@ -40,21 +45,28 @@ services:
       PORT: 3002
       HOST: http://realworld-docker.com
       MONGO_URL: mongodb://auth_db:27017/auth
+      API_URL: htpp://api:3001/api
     depends_on:
       - auth_db
     volumes:
       - /usr/src/app/node_modules
       - ./auth:/usr/src/app
+    networks:
+      - realworld-docker-network
   api_db:
     image: mongo:latest
     container_name: realworld-docker-api-db
     volumes:
       - mongodb_api:/data/db
+    networks:
+      - realworld-docker-network
   auth_db:
     image: mongo:latest
     container_name: realworld-docker-auth-db
     volumes:
       - mongodb_auth:/data/db
+    networks:
+      - realworld-docker-network
   nginx:
     image: nginx:1.26.3
     container_name: realworld-docker-nginx
@@ -64,6 +76,11 @@ services:
       - frontend
     volumes:
       - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
+    networks:
+      - realworld-docker-network
 volumes:
   mongodb_api:
   mongodb_auth:
+networks:
+  realworld-docker-network:
+    driver: bridge
