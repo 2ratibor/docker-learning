@@ -2,7 +2,9 @@ version: '3'
 
 services:
   frontend:
-    build: ./frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.prod
     container_name: realworld-docker-frontend
     command: serve -s build -l 3000
     restart: unless-stopped
@@ -10,9 +12,6 @@ services:
       CHOKIDAR_USEPOLLING: true
     stdin_open: true
     tty: true
-    volumes:
-      - /usr/src/app/node_modules
-      - ./frontend:/usr/src/app
     networks:
       - realworld-docker-network
   api:
@@ -20,18 +19,12 @@ services:
     container_name: realworld-docker-api
     command: npm run start
     restart: unless-stopped
-    ports:
-      - '3001:3001'
     environment:
       PORT: 3001
-      HOST: http://realworld-docker.com
       MONGO_URL: mongodb://api_db:27017/api
       AUTH_API_URL: http://auth:3002/api
     depends_on:
       - api_db
-    volumes:
-      - /usr/src/app/node_modules
-      - ./api:/usr/src/app
     networks:
       - realworld-docker-network
   auth:
@@ -39,18 +32,12 @@ services:
     container_name: realworld-docker-auth
     command: npm run start
     restart: unless-stopped
-    ports:
-      - '3002:3002'
     environment:
       PORT: 3002
-      HOST: http://realworld-docker.com
       MONGO_URL: mongodb://auth_db:27017/auth
       API_URL: htpp://api:3001/api
     depends_on:
       - auth_db
-    volumes:
-      - /usr/src/app/node_modules
-      - ./auth:/usr/src/app
     networks:
       - realworld-docker-network
   api_db:
@@ -74,6 +61,8 @@ services:
       - "80:80"
     depends_on:
       - frontend
+      - api
+      - auth
     volumes:
       - ./nginx/nginx.conf.prod:/etc/nginx/conf.d/nginx.conf
     networks:

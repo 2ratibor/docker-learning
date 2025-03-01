@@ -1,14 +1,13 @@
 const axios = require('axios');
 const express = require('express');
 const { connectDb } = require("./helpers/db");
-const { port, host, db, apiURL} = require("./configuration");
+const { port, db, apiURL} = require("./configuration");
 
 const app = express();
 
 const startServer = () => {
     app.listen(port, () => {
         console.log(`Started auth service on port: ${port}`);
-        console.log(`On host: ${host}`);
         console.log(`Our database: ${db}`);
     });
 };
